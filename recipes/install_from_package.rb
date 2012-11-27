@@ -18,35 +18,25 @@
 #
 
 # add the Fusioninventory-agent Repo
-execute "apt-get update" do
-  action :nothing
-end
- 
-execute "add_fusioninventory_apt_key" do
-  command "wget -O - http://debian.fusioninventory.org/debian/archive.key | apt-key add -"
-  notifies :run, resources("execute[apt-get update]"), :immediately
-end
+case node['platform_family']
+when "debian", "ubuntu"
+    # use the fusioninventory repository instead of Ubuntu or Debian's
+    # because there are very useful features in the newer versions
 
-
-template "/etc/apt/sources.list.d/fusioninventory-agent.list" do
-  owner "root"
-  mode "0644"
-  source "fusioninventory-agent.list.erb"
-  notifies :run, resources("execute[apt-get update]"), :immediately
-end
- 
-
-pkgs = value_for_platform(
-  [ "debian", "ubuntu" ] => {
-    "default" => %w{ fusioninventory-agent }
-  },
-  "default" => %w{ fusioninventory-agent }
-)
-
-pkgs.each do |pkg|
-  package pkg do
-    action :install
+  apt_repository "fusioninventory" do
+    uri "http://debian.fusioninventory.org/debian/"
+    distribution node['lsb']['codename']
+    components ["main"]
+    key "http://debian.fusioninventory.org/debian/archive.key"
+    action :add
   end
+
+    # NOTE: The official fusioninventory-agent apt repository has only the latest version
+  package "fusioninventory-agent" do
+    source "http://debian.fusioninventory.org/debian/"
+    action [:install]
+  end
+
 end
 
 template "#{node['fusioninventory-agent']['conf_dir']}/agent.cfg" do
@@ -55,6 +45,7 @@ template "#{node['fusioninventory-agent']['conf_dir']}/agent.cfg" do
   owner "root"
   group "root"
   mode "0644"
+  notifies :restart, "service[fusioninventory-agent]", :immediately
 end
 
 template "/etc/default/fusioninventory-agent" do
@@ -63,6 +54,7 @@ template "/etc/default/fusioninventory-agent" do
   owner "root"
   group "root"
   mode "0644"
+  notifies :restart, "service[fusioninventory-agent]", :immediately
 end
 
 service node['fusioninventory-agent']['service'] do

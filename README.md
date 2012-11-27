@@ -4,8 +4,7 @@ Installs and configures fusioninventory-agent on debian/ubuntu systems.
 
 Requirements
 ============
-wget
-perl
+apt
 
 Attributes
 ==========
