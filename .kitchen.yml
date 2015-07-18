@@ -1,0 +1,25 @@
+---
+driver_plugin: docker
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: 11.16.4
+
+platforms:
+  - name: debian
+    driver_config:
+      privileged: true
+      disable_upstart: false
+      use_sudo: false
+      remove_images: true
+      image: dsipf/chef:debian
+
+suites:
+  - name: default
+    data_bags_path: 'test/integration/default/data_bags'
+    encrypted_data_bag_secret_key_path: 'test/integration/default/encrypted_data_bag_secret'
+    run_list:
+      - recipe[apt::cacher-client]
+      - recipe[fusioninventory-agent::default]
+    attributes:
+      apt:
+        cacher_ipaddress: proxyapt.srv.gov.pf

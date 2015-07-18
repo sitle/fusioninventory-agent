@@ -33,10 +33,8 @@ when 'debian', 'ubuntu'
 
   # NOTE: The official fusioninventory-agent apt repository has only the latest version
   package 'fusioninventory-agent' do
-    source 'http://debian.fusioninventory.org/debian/'
     action [:install]
   end
-
 end
 
 template "#{node['fusioninventory-agent']['conf_dir']}/agent.cfg" do
