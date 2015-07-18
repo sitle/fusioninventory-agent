@@ -21,5 +21,5 @@ case node['platform']
 when 'debian'
   include_recipe 'fusioninventory-agent::_debian'
 when 'rhel'
-  include_recipe 'fusioninventory-agent::_centos'
+  include_recipe 'fusioninventory-agent::_redhat'
 end

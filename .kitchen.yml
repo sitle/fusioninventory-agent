@@ -13,6 +13,8 @@ platforms:
       use_sudo: false
       remove_images: false
       image: dsipf/chef:debian
+    run_list:
+      - recipe[apt::cacher-client]
     attributes:
       apt:
         cacher_ipaddress: proxyapt.srv.gov.pf
@@ -31,5 +33,4 @@ suites:
     data_bags_path: 'test/integration/default/data_bags'
     encrypted_data_bag_secret_key_path: 'test/integration/default/encrypted_data_bag_secret'
     run_list:
-      - recipe[apt::cacher-client]
       - recipe[fusioninventory-agent::default]
