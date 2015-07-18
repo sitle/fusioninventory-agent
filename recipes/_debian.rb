@@ -1,8 +1,8 @@
 #
-# Author:: Mat Davies (<ashmere@gmail.com>)
+# Author:: Leonard TAVAE (<leonard.tavae@gmail.com>)
 # Cookbook Name:: fusioninventory-agent
 #
-# Copyright 2012
+# Copyright 2015
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -17,24 +17,16 @@
 # limitations under the License.
 #
 
-# add the Fusioninventory-agent Repo
-case node['platform_family']
-when 'debian', 'ubuntu'
-  # use the fusioninventory repository instead of Ubuntu or Debian's
-  # because there are very useful features in the newer versions
+apt_repository 'fusioninventory' do
+  uri 'http://debian.fusioninventory.org/debian/'
+  distribution node['lsb']['codename']
+  components ['main']
+  key 'http://debian.fusioninventory.org/debian/archive.key'
+  action :add
+end
 
-  apt_repository 'fusioninventory' do
-    uri 'http://debian.fusioninventory.org/debian/'
-    distribution node['lsb']['codename']
-    components ['main']
-    key 'http://debian.fusioninventory.org/debian/archive.key'
-    action :add
-  end
-
-  # NOTE: The official fusioninventory-agent apt repository has only the latest version
-  package 'fusioninventory-agent' do
-    action [:install]
-  end
+package 'fusioninventory-agent' do
+  action [:install]
 end
 
 template "#{node['fusioninventory-agent']['conf_dir']}/agent.cfg" do

@@ -7,11 +7,24 @@ provisioner:
 platforms:
   - name: debian
     driver_config:
+      hostname: dev.fusioninventory-agent.gov.pf
       privileged: true
       disable_upstart: false
       use_sudo: false
-      remove_images: true
+      remove_images: false
       image: dsipf/chef:debian
+    attributes:
+      apt:
+        cacher_ipaddress: proxyapt.srv.gov.pf
+
+  - name: centos
+    driver_config:
+      hostname: dev.fusioninventory-agent.gov.pf
+      privileged: true
+      use_sudo: false
+      run_command: /usr/sbin/init
+      remove_images: true
+      image: dsipf/chef:centos
 
 suites:
   - name: default
@@ -20,6 +33,3 @@ suites:
     run_list:
       - recipe[apt::cacher-client]
       - recipe[fusioninventory-agent::default]
-    attributes:
-      apt:
-        cacher_ipaddress: proxyapt.srv.gov.pf
